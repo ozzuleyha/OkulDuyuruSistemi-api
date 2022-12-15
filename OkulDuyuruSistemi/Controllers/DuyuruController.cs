@@ -13,7 +13,9 @@ using OkulDuyuruSistemi.Models;
 
 namespace OkulDuyuruSistemi.Controllers
 {
-    public class DuyuruController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DuyuruController: Controller
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
@@ -31,7 +33,7 @@ namespace OkulDuyuruSistemi.Controllers
                             dbo.Duyuru
                             ";
 
-            DataTable table = new DataTable();
+            DataTable DuyuruTable = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
@@ -40,11 +42,67 @@ namespace OkulDuyuruSistemi.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
+                    DuyuruTable.Load(myReader);
                     myReader.Close();
                 }
             }
-            return new JsonResult(table);
+            return new JsonResult(DuyuruTable);
+        }
+
+        [HttpDelete("delete-duyuru")]
+        public JsonResult DeleteDuyuru(Duyuru duyuru)
+        {
+            string query = @"
+                            delete from dbo.[Duyuru]
+                            where id = @id
+                            ";
+
+            DataTable DuyuruTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", duyuru.Id);
+
+                    myReader = myCommand.ExecuteReader();
+                    DuyuruTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
+        }
+
+        [HttpPost("add-duyuru")]
+        public JsonResult AddUser(RequestParams requestParams)
+        {
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+
+            string UserQuery = @"
+                            insert into dbo.[Duyuru]
+                            (topluluk_id, duyuru_basligi, duyuru_aciklama)
+                            values (@ToplulukId, @DuyuruBasligi, @DuyuruAciklama)
+                            ";
+
+            DataTable DuyuruTable = new DataTable();
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@ToplulukId", requestParams.Topluluk.Id);
+                    myCommand.Parameters.AddWithValue("@DuyuruBasligi", requestParams.Duyuru.DuyuruBasligi);
+                    myCommand.Parameters.AddWithValue("@DuyuruAciklama", requestParams.Duyuru.DuyuruAciklama);
+                    myReader = myCommand.ExecuteReader();
+                    DuyuruTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult("Added Successfully");
         }
     }
 }

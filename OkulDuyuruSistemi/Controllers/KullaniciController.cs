@@ -38,7 +38,7 @@ namespace OkulDuyuruSistemi.Controllers
                             values (@Ad, @Soyad, @Mail, @Parola, @RoleId)
                             ";
 
-            DataTable CarTable = new DataTable();
+            DataTable KullaniciTable = new DataTable();
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
                 myCon.Open();
@@ -50,7 +50,7 @@ namespace OkulDuyuruSistemi.Controllers
                     myCommand.Parameters.AddWithValue("@Parola", kullanici.Parola);
                     myCommand.Parameters.AddWithValue("@RoleId", kullanici.RoleId);
                     myReader = myCommand.ExecuteReader();
-                    CarTable.Load(myReader);
+                    KullaniciTable.Load(myReader);
                     myReader.Close();
                 }
             }

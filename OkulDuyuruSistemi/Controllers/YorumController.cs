@@ -13,6 +13,8 @@ using OkulDuyuruSistemi.Models;
 
 namespace OkulDuyuruSistemi.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class YorumController : Controller
     {
 

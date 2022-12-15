@@ -34,7 +34,7 @@ namespace OkulDuyuruSistemi.Controllers
                             dbo.Topluluk
                             ";
 
-            DataTable table = new DataTable();
+            DataTable ToplulukTable = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
             SqlDataReader myReader;
             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
@@ -43,11 +43,41 @@ namespace OkulDuyuruSistemi.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
+                    ToplulukTable.Load(myReader);
                     myReader.Close();
                 }
             }
-            return new JsonResult(table);
+            return new JsonResult(ToplulukTable);
         }
+
+        //[HttpPost("add-topluluk")]
+        //public JsonResult addTopluluk(RequestParams requestParams)
+        //{
+        //    string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+        //    SqlDataReader myReader;
+
+        //    string UserQuery = @"
+        //                    insert into dbo.[Topluluk]
+        //                    (akademisyen_id, topluluk_adi)
+        //                    values (@AkademisyenId, @ToplulukAdi)
+        //                    ";
+
+        //    DataTable ToplulukTable = new DataTable();
+        //    using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+        //    {
+        //        myCon.Open();
+        //        using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
+        //        {
+        //            myCommand.Parameters.AddWithValue("@YoneticiId", requestParams.Kullanici.Id);
+        //            myCommand.Parameters.AddWithValue("@AkademisyenId", requestParams.Kullanici.Id);
+        //            myCommand.Parameters.AddWithValue("@ToplulukAdi", requestParams.Topluluk.ToplulukAdi);
+        //            myReader = myCommand.ExecuteReader();
+        //            ToplulukTable.Load(myReader);
+        //            myReader.Close();
+        //        }
+        //    }
+
+        //    return new JsonResult("Added Successfully");
+        //}
     }
 }
