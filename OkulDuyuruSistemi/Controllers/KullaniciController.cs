@@ -26,6 +26,30 @@ namespace OkulDuyuruSistemi.Controllers
             _env = env;
         }
 
+        [HttpGet("user-list")]
+        public JsonResult getDuyuruList()
+        {
+            string query = @"
+                            SELECT * FROM
+                            dbo.Kullanici
+                            ";
+
+            DataTable KullaniciTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    KullaniciTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult(KullaniciTable);
+        }
+
         [HttpPost("add-user")]
         public JsonResult AddUser (Kullanici kullanici)
         {
@@ -56,6 +80,40 @@ namespace OkulDuyuruSistemi.Controllers
             }
 
             return new JsonResult("Added Successfully");
+        }
+
+
+
+        [HttpPost("login")]
+        public JsonResult LoginControl(Kullanici kullanici)
+        {
+            string query = @"SELECT * FROM dbo.[Kullanici] WHERE mail='" + kullanici.Mail + "' AND parola='" + kullanici.Parola + "'";
+
+            DataTable table = new DataTable();
+            //int role = user.UserRoleId;
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            if (table.Rows.Count == 0)
+            {
+                return new JsonResult("Yanlış bilgi girildi!");
+            }
+            else
+            {
+                return new JsonResult(table);
+                
+                    
+                    
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace OkulDuyuruSistemi.Models
     {
         public Duyuru Duyuru { get; set; }
         public Topluluk Topluluk { get; set; }
-        //public Kullanici Kullanici{ get; set; }
+        public Kullanici Kullanici { get; set; }
 
     }
 }

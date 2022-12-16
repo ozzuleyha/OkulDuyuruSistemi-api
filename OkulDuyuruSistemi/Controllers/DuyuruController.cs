@@ -25,7 +25,7 @@ namespace OkulDuyuruSistemi.Controllers
             _configuration = configuration;
             _env = env;
         }
-        [HttpGet("yorum-list")]
+        [HttpGet("duyuru-list")]
         public JsonResult getDuyuruList()
         {
             string query = @"

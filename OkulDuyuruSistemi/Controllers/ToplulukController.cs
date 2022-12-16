@@ -50,34 +50,34 @@ namespace OkulDuyuruSistemi.Controllers
             return new JsonResult(ToplulukTable);
         }
 
-        //[HttpPost("add-topluluk")]
-        //public JsonResult addTopluluk(RequestParams requestParams)
-        //{
-        //    string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
-        //    SqlDataReader myReader;
+        [HttpPost("add-topluluk")]
+        public JsonResult addTopluluk(RequestParams requestParams)
+        {
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
 
-        //    string UserQuery = @"
-        //                    insert into dbo.[Topluluk]
-        //                    (akademisyen_id, topluluk_adi)
-        //                    values (@AkademisyenId, @ToplulukAdi)
-        //                    ";
+            string UserQuery = @"
+                            insert into dbo.[Topluluk]
+                            (akademisyen_id, topluluk_adi)
+                            values (@AkademisyenId, @ToplulukAdi)
+                            ";
 
-        //    DataTable ToplulukTable = new DataTable();
-        //    using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-        //    {
-        //        myCon.Open();
-        //        using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
-        //        {
-        //            myCommand.Parameters.AddWithValue("@YoneticiId", requestParams.Kullanici.Id);
-        //            myCommand.Parameters.AddWithValue("@AkademisyenId", requestParams.Kullanici.Id);
-        //            myCommand.Parameters.AddWithValue("@ToplulukAdi", requestParams.Topluluk.ToplulukAdi);
-        //            myReader = myCommand.ExecuteReader();
-        //            ToplulukTable.Load(myReader);
-        //            myReader.Close();
-        //        }
-        //    }
+            DataTable ToplulukTable = new DataTable();
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@YoneticiId", requestParams.Kullanici.Id);
+                    myCommand.Parameters.AddWithValue("@AkademisyenId", requestParams.Kullanici.Id);
+                    myCommand.Parameters.AddWithValue("@ToplulukAdi", requestParams.Topluluk.ToplulukAdi);
+                    myReader = myCommand.ExecuteReader();
+                    ToplulukTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
 
-        //    return new JsonResult("Added Successfully");
-        //}
+            return new JsonResult("Added Successfully");
+        }
     }
 }

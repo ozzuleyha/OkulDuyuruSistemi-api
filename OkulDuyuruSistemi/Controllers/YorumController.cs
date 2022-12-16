@@ -49,5 +49,7 @@ namespace OkulDuyuruSistemi.Controllers
             }
             return new JsonResult(table);
         }
+
+
     }
 }
