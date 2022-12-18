@@ -10,5 +10,7 @@ namespace OkulDuyuruSistemi.Models
 
         public int Id { get; set; }
         public string ToplulukAdi { get; set; }
+        public int YoneticiKullaniciId { get; set; }
+        public int AkademisyenId { get; set; }
     }
 }

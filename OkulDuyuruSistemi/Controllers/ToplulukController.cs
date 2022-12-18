@@ -50,16 +50,42 @@ namespace OkulDuyuruSistemi.Controllers
             return new JsonResult(ToplulukTable);
         }
 
+        [HttpDelete("delete-topluluk")]
+        public JsonResult DeleteTopluluk(Topluluk topluluk)
+        {
+            string query = @"
+                            delete from dbo.[Topluluk]
+                            where id = @id
+                            ";
+
+            DataTable ToplulukTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", topluluk.Id);
+
+                    myReader = myCommand.ExecuteReader();
+                    ToplulukTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
+        }
+
         [HttpPost("add-topluluk")]
-        public JsonResult addTopluluk(RequestParams requestParams)
+        public JsonResult addTopluluk(Topluluk topluluk)
         {
             string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
             SqlDataReader myReader;
 
             string UserQuery = @"
                             insert into dbo.[Topluluk]
-                            (akademisyen_id, topluluk_adi)
-                            values (@AkademisyenId, @ToplulukAdi)
+                            (yonetici_kullanici_id, akademisyen_id, topluluk_adi)
+                            values (@YoneticiId, @AkademisyenId, @ToplulukAdi)
                             ";
 
             DataTable ToplulukTable = new DataTable();
@@ -68,9 +94,9 @@ namespace OkulDuyuruSistemi.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@YoneticiId", requestParams.Kullanici.Id);
-                    myCommand.Parameters.AddWithValue("@AkademisyenId", requestParams.Kullanici.Id);
-                    myCommand.Parameters.AddWithValue("@ToplulukAdi", requestParams.Topluluk.ToplulukAdi);
+                    myCommand.Parameters.AddWithValue("@YoneticiId", topluluk.YoneticiKullaniciId);
+                    myCommand.Parameters.AddWithValue("@AkademisyenId", topluluk.AkademisyenId);
+                    myCommand.Parameters.AddWithValue("@ToplulukAdi", topluluk.ToplulukAdi);
                     myReader = myCommand.ExecuteReader();
                     ToplulukTable.Load(myReader);
                     myReader.Close();

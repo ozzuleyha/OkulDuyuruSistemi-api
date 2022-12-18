@@ -49,6 +49,56 @@ namespace OkulDuyuruSistemi.Controllers
             }
             return new JsonResult(KullaniciTable);
         }
+        [HttpDelete("delete-kullanici")]
+        public JsonResult DeleteKullanici(Kullanici kullanici)
+        {
+            string query = @"
+                            delete from dbo.[Kullanici]
+                            where id = @id
+                            ";
+
+            DataTable KullaniciTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", kullanici.Id);
+
+                    myReader = myCommand.ExecuteReader();
+                    KullaniciTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
+        }
+
+        [HttpGet("akademisyen-list")]
+        public JsonResult getAkademisyenList()
+        {
+            string query = @"
+                            SELECT * FROM
+                            dbo.Kullanici
+                            WHERE (role_id = 2)
+                            ";
+
+            DataTable KullaniciTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    KullaniciTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult(KullaniciTable);
+        }
 
         [HttpPost("add-user")]
         public JsonResult AddUser (Kullanici kullanici)
