@@ -50,6 +50,35 @@ namespace OkulDuyuruSistemi.Controllers
             return new JsonResult(ToplulukTable);
         }
 
+        [HttpPut("update-topluluk")]
+        public JsonResult UpdateTopluluk(Topluluk topluluk)
+        {
+            string query = @"
+                             UPDATE dbo.Topluluk
+                             SET akademisyen_id=@AkademisyenId, yonetici_kullanici_id=@YoneticiId, topluluk_adi=@ToplulukAdi
+                             WHERE id=@id
+                             ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", topluluk.Id);
+                    myCommand.Parameters.AddWithValue("@AkademisyenId", topluluk.AkademisyenId);
+                    myCommand.Parameters.AddWithValue("@YoneticiId", topluluk.YoneticiKullaniciId);
+                    myCommand.Parameters.AddWithValue("@ToplulukAdi", topluluk.ToplulukAdi);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Updated Successfully");
+        }
+
         [HttpDelete("delete-topluluk")]
         public JsonResult DeleteTopluluk(Topluluk topluluk)
         {
