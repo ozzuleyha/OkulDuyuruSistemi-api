@@ -74,9 +74,37 @@ namespace OkulDuyuruSistemi.Controllers
             }
             return new JsonResult("Deleted Successfully");
         }
+        [HttpPut("update-duyuru")]
+        public JsonResult UpdateDuyuru (Duyuru duyuru)
+        {
+            string query = @"
+                             UPDATE dbo.Duyuru
+                             SET duyuru_basligi=@DuyuruBasligi, duyuru_aciklama=@DuyuruAciklama, topluluk_id=@ToplulukId
+                             WHERE id=@id
+                             ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", duyuru.Id);
+                    myCommand.Parameters.AddWithValue("@DuyuruBasligi", duyuru.DuyuruBasligi);
+                    myCommand.Parameters.AddWithValue("@DuyuruAciklama", duyuru.DuyuruAciklama);
+                    myCommand.Parameters.AddWithValue("@ToplulukId", duyuru.ToplulukId);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Updated Successfully");
+        }
 
         [HttpPost("add-duyuru")]
-        public JsonResult AddUser(RequestParams requestParams)
+        public JsonResult AddUser(Duyuru duyuru)
         {
             string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
             SqlDataReader myReader;
@@ -93,9 +121,9 @@ namespace OkulDuyuruSistemi.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@ToplulukId", requestParams.Topluluk.Id);
-                    myCommand.Parameters.AddWithValue("@DuyuruBasligi", requestParams.Duyuru.DuyuruBasligi);
-                    myCommand.Parameters.AddWithValue("@DuyuruAciklama", requestParams.Duyuru.DuyuruAciklama);
+                    myCommand.Parameters.AddWithValue("@ToplulukId", duyuru.ToplulukId);
+                    myCommand.Parameters.AddWithValue("@DuyuruBasligi", duyuru.DuyuruBasligi);
+                    myCommand.Parameters.AddWithValue("@DuyuruAciklama", duyuru.DuyuruAciklama);
                     myReader = myCommand.ExecuteReader();
                     DuyuruTable.Load(myReader);
                     myReader.Close();
