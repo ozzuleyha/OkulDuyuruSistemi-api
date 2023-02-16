@@ -100,6 +100,58 @@ namespace OkulDuyuruSistemi.Controllers
             return new JsonResult(KullaniciTable);
         }
 
+        [HttpPut("update-yonetici")]
+        public JsonResult UpdateYonetici (Kullanici yonetici)
+        {
+            string query = @"
+                             UPDATE dbo.Kullanici
+                             SET role_id=@RoleId
+                             WHERE id=@id
+                             ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@id", yonetici.Id);
+                    myCommand.Parameters.AddWithValue("@RoleId", yonetici.RoleId);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult("Updated Successfully");
+        }
+
+        [HttpGet("yonetici-list")]
+        public JsonResult getYoneticiList()
+        {
+            string query = @"
+                            SELECT * FROM
+                            dbo.Kullanici
+                            WHERE (role_id = 3)
+                            ";
+
+            DataTable KullaniciTable = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    KullaniciTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+            return new JsonResult(KullaniciTable);
+        }
+
         [HttpPost("add-user")]
         public JsonResult AddUser (Kullanici kullanici)
         {

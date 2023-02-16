@@ -104,7 +104,7 @@ namespace OkulDuyuruSistemi.Controllers
         }
 
         [HttpPost("add-duyuru")]
-        public JsonResult AddUser(Duyuru duyuru)
+        public JsonResult AddDuyuru(Duyuru duyuru)
         {
             string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
             SqlDataReader myReader;

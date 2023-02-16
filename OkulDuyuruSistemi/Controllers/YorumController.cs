@@ -26,6 +26,38 @@ namespace OkulDuyuruSistemi.Controllers
             _configuration = configuration;
             _env = env;
         }
+
+        [HttpPost("add-yorum")]
+        public JsonResult AddYorum(Yorum yorum)
+        {
+            string sqlDataSource = _configuration.GetConnectionString("DuyuruAppCon");
+            SqlDataReader myReader;
+
+            string UserQuery = @"
+                            insert into dbo.[Yorum]
+                            (kullanici_id, duyuru_id, yorum_aciklama)
+                            values (@KullaniciId, @DuyuruId, @Yorum)
+                            ";
+
+            DataTable DuyuruTable = new DataTable();
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(UserQuery, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@KullaniciId", yorum.KullaniciId);
+                    myCommand.Parameters.AddWithValue("@DuyuruId", yorum.DuyuruId);
+                    myCommand.Parameters.AddWithValue("@Yorum", yorum.YorumAciklama);
+                    myReader = myCommand.ExecuteReader();
+                    DuyuruTable.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return new JsonResult("Added Successfully");
+        }
+
+
         [HttpGet("yorum-list")]
         public JsonResult getYorumList ()
         {

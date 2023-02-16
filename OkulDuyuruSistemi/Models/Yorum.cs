@@ -10,5 +10,7 @@ namespace OkulDuyuruSistemi.Models
 
         public int Id { get; set; }
         public string YorumAciklama { get; set; }
+        public int DuyuruId { get; set; }
+        public int KullaniciId { get; set; }
     }
 }
